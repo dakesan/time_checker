@@ -41,9 +41,15 @@ async fn main() -> reqwest::Result<()> {
             println!("Local time : {:?}", local);
             println!();
             if diff.num_milliseconds() > 0 {
-                println!("機械時間が {:.3}ms 遅れてるっぽいです🐢", diff);
+                println!("機械時間が {:.3}ms ({}min) 遅れてるっぽいです🐢",
+                diff.num_milliseconds(),
+                diff.num_minutes()
+            );
             } else {
-                println!("機械時間が {:.3}ms 進んでるっぽいです🐇", -diff);
+                println!("機械時間が {:.3}ms ({}min) 進んでるっぽいです🐇",
+                -diff.num_milliseconds(),
+                diff.num_minutes()
+            );
             }
             Ok(())
         }
@@ -68,9 +74,15 @@ async fn main() -> reqwest::Result<()> {
             println!("Local time : {:?}", local);
             println!();
             if diff.num_milliseconds() > 0 {
-                println!("機械時間が {:.3}ms 遅れてるっぽいです🐢", diff);
+                println!("機械時間が {:.3}ms ({}min) 遅れてるっぽいです🐢",
+                diff.num_milliseconds(),
+                diff.num_minutes()
+            );
             } else {
-                println!("機械時間が {:.3}ms 進んでるっぽいです🐇", -diff);
+                println!("機械時間が {:.3}ms ({}min) 進んでるっぽいです🐇",
+                -diff.num_milliseconds(),
+                diff.num_minutes()
+            );
             }
             Ok(())
         }
