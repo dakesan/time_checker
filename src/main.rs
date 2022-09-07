@@ -22,7 +22,7 @@ struct TimeData {
 
 #[tokio::main]
 async fn main() -> reqwest::Result<()> {
-    let args: Vec<String> = env::args().collect();
+    let args: Vec<String> = std::env::args().collect();
     match args.len() {
         // no arguments passed
         // 引数がない場合
