@@ -22,22 +22,60 @@ struct TimeData {
 
 #[tokio::main]
 async fn main() -> reqwest::Result<()> {
-    let local: DateTime<Local> = Local::now();
-    
-    let body = reqwest::get("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
-    let json_value = body.await?.json::<TimeData>().await?;
-    let date_online = DateTime::parse_from_rfc3339(&json_value.datetime).unwrap().with_timezone(&local.timezone());
-    
-    let diff = date_online - local;
+    let args: Vec<String> = env::args().collect();
+    match args.len() {
+        // no arguments passed
+        // 引数がない場合
+        1 => {
+            let local: DateTime<Local> = Local::now();
 
-    println!("Online time: {:?}", date_online);
-    println!("Local time : {:?}", local);
-    println!();
-    if diff.num_milliseconds() > 0 {
-        println!("機械時間が {:.3}ms 遅れてるっぽいです🐢", diff);
+            let body = reqwest::get("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
+            let json_value = body.await?.json::<TimeData>().await?;
+            let date_online = DateTime::parse_from_rfc3339(&json_value.datetime)
+                .unwrap()
+                .with_timezone(&local.timezone());
+
+            let diff = date_online - local;
+
+            println!("Online time: {:?}", date_online);
+            println!("Local time : {:?}", local);
+            println!();
+            if diff.num_milliseconds() > 0 {
+                println!("機械時間が {:.3}ms 遅れてるっぽいです🐢", diff);
+            } else {
+                println!("機械時間が {:.3}ms 進んでるっぽいです🐇", -diff);
+            }
+            Ok(())
+        }
+        // one argument passed
+        // 引数が1つの場合
+        2 => {
+            let argument: String = args[1].parse().unwrap();
+            let local: DateTime<Local> = Local::now();
+
+            let client = reqwest::Client::builder()
+                .proxy(reqwest::Proxy::http(&argument)?)
+                .build()?;
+            let body = client.get("http://worldtimeapi.org/api/timezone/Asia/Tokyo").send();
+            let json_value = body.await?.json::<TimeData>().await?;
+            let date_online = DateTime::parse_from_rfc3339(&json_value.datetime)
+                .unwrap()
+                .with_timezone(&local.timezone());
+
+            let diff = date_online - local;
+
+            println!("Online time: {:?}", date_online);
+            println!("Local time : {:?}", local);
+            println!();
+            if diff.num_milliseconds() > 0 {
+                println!("機械時間が {:.3}ms 遅れてるっぽいです🐢", diff);
+            } else {
+                println!("機械時間が {:.3}ms 進んでるっぽいです🐇", -diff);
+            }
+            Ok(())
+        }
+        // all the other cases
+        // その他の場合
+        _ => Ok(()),
     }
-    else {
-        println!("機械時間が {:.3}ms 進んでるっぽいです🐇", -diff);
-    }
-    Ok(())
 }
