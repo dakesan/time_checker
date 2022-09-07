@@ -36,6 +36,8 @@ async fn main() -> reqwest::Result<()> {
     if diff.num_milliseconds() > 0 {
         println!("機械時間が {:.3}ms 遅れてるっぽいです🐢", diff);
     }
-    println!("機械時間が {:.3}ms 進んでるっぽいです🐇", -diff);
+    else {
+        println!("機械時間が {:.3}ms 進んでるっぽいです🐇", -diff);
+    }
     Ok(())
 }
